@@ -4,6 +4,25 @@ import { truckCreateSchema, paginationSchema } from '@/lib/validation'
 import { validateRequest, formatValidationError, createErrorResponse, createSuccessResponse } from '@/lib/api-helpers'
 import { seedTrucks } from '@/lib/seed-data'
 
+type TruckWithNumberPrice = {
+  id: number
+  name: string
+  manufacturer: string
+  model: string
+  year: number
+  kilometers: number
+  horsepower: number
+  price: number
+  imageUrl: string
+  subtitle: string | null
+  certified: boolean
+  state: string | null
+  location: string | null
+  city: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -18,7 +37,13 @@ export async function GET(request: Request) {
     const limit = pagination.success ? pagination.data.limit : 20
     const skip = (page - 1) * limit
 
-    const result = await safePrismaQuery(
+    const result = await safePrismaQuery<{
+      trucks: TruckWithNumberPrice[]
+      total: number
+      page: number
+      limit: number
+      totalPages: number
+    }>(
       async (prisma) => {
         const [trucks, total] = await Promise.all([
           prisma.truck.findMany({
@@ -41,14 +66,20 @@ export async function GET(request: Request) {
         const trucksWithNumberPrice = trucks.map(truck => ({
           ...truck,
           price: Number(truck.price),
-          subtitle: truck.subtitle || undefined,
+          subtitle: truck.subtitle ?? null,
         }))
         return { trucks: trucksWithNumberPrice, total, page, limit, totalPages: Math.ceil(total / limit) }
       },
       // Fallback to seed data when database is unavailable
       (() => {
         const certifiedTrucks = seedTrucks.filter(t => t.certified)
-        const paginatedTrucks = certifiedTrucks.slice(skip, skip + limit)
+        const paginatedTrucks = certifiedTrucks.slice(skip, skip + limit).map(truck => ({
+          ...truck,
+          subtitle: truck.subtitle ?? null,
+          state: null,
+          location: null,
+          city: null,
+        })) as TruckWithNumberPrice[]
         return {
           trucks: paginatedTrucks,
           total: certifiedTrucks.length,
@@ -86,7 +117,7 @@ export async function POST(request: Request) {
     // TODO: Add authentication check here
     // For now, we'll allow it but in production, add proper auth
 
-    const truck = await safePrismaQuery(
+    const truck = await safePrismaQuery<TruckWithNumberPrice | null>(
       async (prisma) => {
         const result = await prisma.truck.create({
           data: validation.data
@@ -95,7 +126,7 @@ export async function POST(request: Request) {
         return {
           ...result,
           price: Number(result.price),
-          subtitle: result.subtitle || undefined,
+          subtitle: result.subtitle ?? null,
         }
       },
       null

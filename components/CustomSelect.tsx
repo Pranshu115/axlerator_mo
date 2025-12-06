@@ -149,11 +149,11 @@ export default function CustomSelect({
         <button
           type="button"
           id={id}
-          className={`custom-select-trigger ${isOpen ? 'open' : ''} ${value ? 'has-value' : ''}`}
+          className={`custom-select-trigger ${isOpen ? 'open' : ''} ${value ? 'has-value' : ''} ${required && !value ? 'required' : ''}`}
           onClick={handleToggle}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
-          required={required}
+          aria-required={required}
         >
           <span className="custom-select-value">{selectedLabel}</span>
           <svg

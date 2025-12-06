@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { safePrismaQuery } from '@/lib/prisma'
 import { seedTrucks } from '@/lib/seed-data'
 
+type TruckWithNumberPrice = {
+  id: number
+  name: string
+  manufacturer: string
+  model: string
+  year: number
+  kilometers: number
+  horsepower: number
+  price: number
+  imageUrl: string
+  subtitle: string | null
+  certified: boolean
+  state: string | null
+  location: string | null
+  city: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,7 +37,7 @@ export async function GET(
     }
 
     // First, get the current truck to find similar ones
-    const currentTruck = await safePrismaQuery(
+    const currentTruck = await safePrismaQuery<TruckWithNumberPrice | null>(
       async (prisma) => {
         const result = await prisma.truck.findUnique({
           where: { id: truckId },
@@ -28,13 +47,23 @@ export async function GET(
           return {
             ...result,
             price: Number(result.price),
-            subtitle: result.subtitle || undefined,
+            subtitle: result.subtitle ?? null,
           }
         }
         return null
       },
       // Fallback to seed data
-      seedTrucks.find(t => t.id === truckId) || null
+      (() => {
+        const seedTruck = seedTrucks.find(t => t.id === truckId)
+        if (!seedTruck) return null
+        return {
+          ...seedTruck,
+          subtitle: seedTruck.subtitle ?? null,
+          state: null,
+          location: null,
+          city: null,
+        } as TruckWithNumberPrice
+      })()
     )
 
     if (!currentTruck) {
@@ -48,7 +77,7 @@ export async function GET(
     const priceMin = Number(currentTruck.price) * 0.7
     const priceMax = Number(currentTruck.price) * 1.3
 
-    const similarTrucks = await safePrismaQuery(
+    const similarTrucks = await safePrismaQuery<TruckWithNumberPrice[]>(
       async (prisma) => {
         const results = await prisma.truck.findMany({
           where: {
@@ -77,7 +106,7 @@ export async function GET(
         return results.map(truck => ({
           ...truck,
           price: Number(truck.price),
-          subtitle: truck.subtitle || undefined,
+          subtitle: truck.subtitle ?? null,
         }))
       },
       // Fallback to seed data - find similar trucks
@@ -89,6 +118,13 @@ export async function GET(
             (Number(t.price) >= priceMin && Number(t.price) <= priceMax)
           )
           .slice(0, 4)
+          .map(truck => ({
+            ...truck,
+            subtitle: truck.subtitle ?? null,
+            state: null,
+            location: null,
+            city: null,
+          })) as TruckWithNumberPrice[]
       })()
     )
 

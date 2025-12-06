@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { safePrismaQuery } from '@/lib/prisma'
 import { seedTrucks } from '@/lib/seed-data'
 
+type TruckWithNumberPrice = {
+  id: number
+  name: string
+  manufacturer: string
+  model: string
+  year: number
+  kilometers: number
+  horsepower: number
+  price: number
+  imageUrl: string
+  subtitle: string | null
+  certified: boolean
+  state: string | null
+  location: string | null
+  city: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -17,7 +36,7 @@ export async function GET(
       )
     }
 
-    const truck = await safePrismaQuery(
+    const truck = await safePrismaQuery<TruckWithNumberPrice | null>(
       async (prisma) => {
         const result = await prisma.truck.findUnique({
           where: {
@@ -29,13 +48,23 @@ export async function GET(
           return {
             ...result,
             price: Number(result.price),
-            subtitle: result.subtitle || undefined,
+            subtitle: result.subtitle ?? null,
           }
         }
         return null
       },
       // Fallback to seed data when database is unavailable
-      seedTrucks.find(t => t.id === truckId) || null
+      (() => {
+        const seedTruck = seedTrucks.find(t => t.id === truckId)
+        if (!seedTruck) return null
+        return {
+          ...seedTruck,
+          subtitle: seedTruck.subtitle ?? null,
+          state: null,
+          location: null,
+          city: null,
+        } as TruckWithNumberPrice
+      })()
     )
 
     if (!truck) {

@@ -74,7 +74,7 @@ export async function GET(request: Request) {
         const trucksWithNumberPrice = trucks.map(truck => ({
           ...truck,
           price: Number(truck.price),
-          subtitle: truck.subtitle || undefined,
+          subtitle: truck.subtitle ?? null,
         }))
         
         return { trucks: trucksWithNumberPrice, total, page, limit, totalPages: Math.ceil(total / limit) }
