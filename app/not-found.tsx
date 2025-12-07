@@ -1,17 +1,15 @@
 import Link from 'next/link'
-import { headers } from 'next/headers'
-import { cookies } from 'next/headers'
+import { unstable_noStore as noStore } from 'next/cache'
 
-// Force dynamic rendering by using multiple dynamic functions
+// Force dynamic rendering - prevent any static generation
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 export const revalidate = 0
+export const runtime = 'nodejs'
 
-export default async function NotFound() {
-  // Use multiple dynamic functions to absolutely force dynamic rendering
-  // This prevents any possibility of static generation
-  headers()
-  cookies()
+export default function NotFound() {
+  // Force dynamic rendering by using noStore
+  noStore()
   
   return (
     <div style={{
