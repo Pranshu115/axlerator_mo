@@ -13,6 +13,9 @@
     "lint": "next lint",
     "seed": "node prisma/seed.js"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@prisma/client": "^6.19.0",

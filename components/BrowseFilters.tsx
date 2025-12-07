@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface BrowseFiltersProps {
   onFilterChange: (filters: any) => void
@@ -29,12 +29,9 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
   const [selectedOwner, setSelectedOwner] = useState('')
   const [selectedAvailability, setSelectedAvailability] = useState('')
 
-  // Use ref to track previous filter values to prevent infinite loops
-  const prevFiltersRef = useRef<string>('')
-
   // Auto-apply filters whenever any filter value changes
   useEffect(() => {
-    const currentFilters = JSON.stringify({
+    onFilterChange({
       priceMin,
       priceMax,
       selectedBrands,
@@ -46,23 +43,6 @@ export default function BrowseFilters({ onFilterChange, totalCars }: BrowseFilte
       selectedOwner,
       selectedAvailability
     })
-
-    // Only call onFilterChange if filters actually changed
-    if (prevFiltersRef.current !== currentFilters) {
-      prevFiltersRef.current = currentFilters
-      onFilterChange({
-        priceMin,
-        priceMax,
-        selectedBrands,
-        selectedYear,
-        selectedKmDriven,
-        selectedFuelTypes,
-        selectedColors,
-        selectedFeatures,
-        selectedOwner,
-        selectedAvailability
-      })
-    }
   }, [priceMin, priceMax, selectedBrands, selectedYear, selectedKmDriven, 
       selectedFuelTypes, selectedColors, selectedFeatures, selectedOwner, selectedAvailability, onFilterChange])
 
