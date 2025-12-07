@@ -1,13 +1,17 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
+import { cookies } from 'next/headers'
 
-// Force dynamic rendering by using headers()
+// Force dynamic rendering by using multiple dynamic functions
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
+export const revalidate = 0
 
 export default async function NotFound() {
-  // Use headers() to force dynamic rendering - prevents static generation
+  // Use multiple dynamic functions to absolutely force dynamic rendering
+  // This prevents any possibility of static generation
   headers()
+  cookies()
   
   return (
     <div style={{
