@@ -14,7 +14,7 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const searchRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLFormElement>(null)
 
 const SHOW_SELL_LOCATION_LINKS = false
 
@@ -177,7 +177,7 @@ const searchSuggestions = [
       const searchParam = urlParams.get('search')
       if (searchParam !== null) {
         setSearchQuery(searchParam)
-      } else if (searchQuery && !searchParam) {
+      } else {
         // Clear search if URL param is removed
         setSearchQuery('')
       }
