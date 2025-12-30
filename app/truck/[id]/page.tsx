@@ -824,14 +824,42 @@ export default function TruckDetailsPage() {
               </svg>
               Axlerator Assured
             </div>
-            <div className="td-image-dots">
-              {gallery.map((_, idx) => (
-                <button 
-                  key={idx}
-                  className={`td-dot ${idx === selectedImageIndex ? 'active' : ''}`}
-                  onClick={() => setSelectedImageIndex(idx)}
-                />
-              ))}
+            <div className="td-image-dots-container">
+              {gallery.length > visibleThumbCount && (
+                <div className="td-image-dots-wrapper">
+                  {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((_, relativeIdx) => {
+                    const absoluteIdx = visibleThumbStart + relativeIdx
+                    return (
+                      <button 
+                        key={absoluteIdx}
+                        className={`td-dot ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedImageIndex(absoluteIdx)
+                          // Keep the dot in view if needed
+                          if (absoluteIdx < visibleThumbStart) {
+                            setVisibleThumbStart(absoluteIdx)
+                          } else if (absoluteIdx >= visibleThumbStart + visibleThumbCount) {
+                            setVisibleThumbStart(Math.max(0, absoluteIdx - visibleThumbCount + 1))
+                          }
+                        }}
+                        aria-label={`Go to image ${absoluteIdx + 1}`}
+                      />
+                    )
+                  })}
+                </div>
+              )}
+              {gallery.length <= visibleThumbCount && (
+                <div className="td-image-dots-wrapper">
+                  {gallery.map((_, idx) => (
+                    <button 
+                      key={idx}
+                      className={`td-dot ${idx === selectedImageIndex ? 'active' : ''}`}
+                      onClick={() => setSelectedImageIndex(idx)}
+                      aria-label={`Go to image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="td-thumbs-container">

@@ -8226,17 +8226,27 @@ body:has(.contact-page) .search-icon,
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
 
-.td-image-dots {
+.td-image-dots-container {
   position: absolute;
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 1rem;
+}
+
+.td-image-dots-wrapper {
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
 }
 
 .td-dot {
@@ -8248,10 +8258,20 @@ body:has(.contact-page) .search-icon,
   cursor: pointer;
   padding: 0;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.td-dot:hover { background: rgba(255, 255, 255, 0.7); }
-.td-dot.active { background: white; width: 20px; border-radius: 4px; }
+.td-dot:hover { 
+  background: rgba(255, 255, 255, 0.7); 
+  transform: scale(1.2);
+}
+
+.td-dot.active { 
+  background: white; 
+  width: 20px; 
+  border-radius: 4px; 
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
 
 .td-thumbs-container {
   display: flex;
