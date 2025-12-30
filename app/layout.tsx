@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
-import ToasterProvider from '@/components/ToasterProvider'
+import { Toaster } from 'sonner'
 
 const poppins = Poppins({ 
   weight: ['300', '400', '500', '600', '700'],
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         {children}
-        <ToasterProvider />
+        <Toaster position="top-right" richColors />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -20,12 +20,32 @@ export async function safeSupabaseQuery<T>(
 ): Promise<T> {
   try {
     if (!supabase) {
-      console.warn('Supabase client not initialized. Using fallback data.')
+      const hasUrl = !!(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL)
+      const hasKey = !!(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY)
+      
+      console.error('⚠️ Supabase client not initialized!')
+      console.error(`   URL configured: ${hasUrl ? '✅ Yes' : '❌ No'}`)
+      console.error(`   Key configured: ${hasKey ? '✅ Yes' : '❌ No'}`)
+      console.error('   Using fallback data instead.')
+      
+      if (!hasUrl || !hasKey) {
+        console.error('   ⚠️ ACTION REQUIRED: Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables')
+      }
+      
       return fallback
     }
-    return await queryFn(supabase)
-  } catch (error) {
-    console.error('Supabase query error:', error)
+    
+    const result = await queryFn(supabase)
+    return result
+  } catch (error: any) {
+    console.error('❌ Supabase query error:', error)
+    if (error?.message) {
+      console.error('   Error message:', error.message)
+    }
+    if (error?.code) {
+      console.error('   Error code:', error.code)
+    }
+    console.error('   Falling back to seed data')
     return fallback
   }
 }

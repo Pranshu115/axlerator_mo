@@ -37,6 +37,16 @@ export async function GET(request: Request) {
     const limit = pagination.success ? pagination.data.limit : 20
     const skip = (page - 1) * limit
 
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('⚠️ Supabase credentials missing in production!')
+      console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing')
+      console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseKey ? 'Set' : 'Missing')
+    }
+
     const result = await safeSupabaseQuery<{
       trucks: TruckWithNumberPrice[]
       total: number
@@ -46,10 +56,15 @@ export async function GET(request: Request) {
     }>(
       async (supabase) => {
         // Get total count
-        const { count } = await supabase
+        const { count, error: countError } = await supabase
           .from('trucks')
           .select('*', { count: 'exact', head: true })
           .eq('certified', true)
+
+        if (countError) {
+          console.error('Error getting truck count:', countError)
+          throw countError
+        }
 
         // Get paginated trucks
         const { data: trucks, error } = await supabase
@@ -60,8 +75,11 @@ export async function GET(request: Request) {
           .range(skip, skip + limit - 1)
 
         if (error) {
+          console.error('Error fetching trucks from Supabase:', error)
           throw error
         }
+
+        console.log(`✅ Successfully fetched ${trucks?.length || 0} trucks from Supabase`)
 
         // Convert Supabase format to API format
         const trucksWithNumberPrice: TruckWithNumberPrice[] = (trucks || []).map((truck: Truck) => ({
@@ -88,6 +106,7 @@ export async function GET(request: Request) {
       },
       // Fallback to seed data when database is unavailable
       (() => {
+        console.warn('⚠️ Using fallback seed data - Supabase connection failed or not configured')
         const certifiedTrucks = seedTrucks.filter(t => t.certified)
         const paginatedTrucks = certifiedTrucks.slice(skip, skip + limit).map(truck => ({
           ...truck,
@@ -96,6 +115,7 @@ export async function GET(request: Request) {
           location: null,
           city: null,
         })) as TruckWithNumberPrice[]
+        console.log(`📦 Returning ${paginatedTrucks.length} trucks from seed data (total: ${certifiedTrucks.length})`)
         return {
           trucks: paginatedTrucks,
           total: certifiedTrucks.length,
@@ -105,6 +125,13 @@ export async function GET(request: Request) {
         }
       })()
     )
+    
+    // Add debug info in response headers (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      const response = NextResponse.json(result)
+      response.headers.set('X-Debug-Source', result.trucks.length > 0 ? 'database' : 'seed')
+      return response
+    }
     
     return NextResponse.json(result)
   } catch (error) {
