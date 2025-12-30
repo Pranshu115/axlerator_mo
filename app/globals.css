@@ -922,8 +922,17 @@ div[class*="nprogress"],
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(128, 128, 128, 0.15) 0%, rgba(128, 128, 128, 0.1) 100%);
+  background: linear-gradient(
+    135deg, 
+    rgba(100, 100, 100, 0.3) 0%, 
+    rgba(120, 120, 120, 0.25) 25%,
+    rgba(100, 100, 100, 0.2) 50%,
+    rgba(120, 120, 120, 0.25) 75%,
+    rgba(100, 100, 100, 0.3) 100%
+  );
   z-index: 1;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 .hero-content {

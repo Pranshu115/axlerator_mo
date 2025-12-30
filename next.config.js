@@ -135,6 +135,20 @@ const nextConfig = {
       config.plugins.push(new FileChangeLoggerPlugin())
     }
     
+    // Fix module resolution issues
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+    
+    // Ensure proper module resolution
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts', '.tsx'],
+      '.jsx': ['.jsx', '.tsx'],
+    };
+    
     config.watchOptions = {
       ...config.watchOptions,
       ignored: ['**/node_modules/**', '**/drive-again-motors-main 2/**'],
