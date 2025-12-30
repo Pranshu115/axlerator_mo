@@ -8253,9 +8253,18 @@ body:has(.contact-page) .search-icon,
 .td-dot:hover { background: rgba(255, 255, 255, 0.7); }
 .td-dot.active { background: white; width: 20px; border-radius: 4px; }
 
+.td-thumbs-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
 .td-thumbs {
   display: flex;
   gap: 0.625rem;
+  flex: 1;
+  overflow: hidden;
 }
 
 .td-thumb {
@@ -8274,6 +8283,33 @@ body:has(.contact-page) .search-icon,
 
 .td-thumb:hover { border-color: #94a3b8; }
 .td-thumb.active { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); }
+
+.td-thumbs-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.td-thumbs-nav-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.td-thumbs-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 /* Product Info */
 .td-info {

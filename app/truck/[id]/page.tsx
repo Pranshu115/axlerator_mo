@@ -114,6 +114,8 @@ export default function TruckDetailsPage() {
   const [activeSection, setActiveSection] = useState('specs')
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [truckImages, setTruckImages] = useState<string[]>([])
+  const [visibleThumbStart, setVisibleThumbStart] = useState(0)
+  const visibleThumbCount = 10 // Show 10 thumbnails at a time
   const [showContactForm, setShowContactForm] = useState(false)
   const [showTestDriveForm, setShowTestDriveForm] = useState(false)
   const [showFullReport, setShowFullReport] = useState(false)
@@ -231,6 +233,22 @@ export default function TruckDetailsPage() {
   useEffect(() => {
     computeEMI()
   }, [computeEMI])
+
+  // Keep selected thumbnail visible when it changes
+  useEffect(() => {
+    // Use truckImages if available, otherwise fallback to gallery from getGalleryImages
+    const totalImages = truckImages.length > 0 ? truckImages.length : (truck?.imageUrl ? 1 : 0)
+    if (totalImages > visibleThumbCount) {
+      // If selected image is before visible range, scroll to show it
+      if (selectedImageIndex < visibleThumbStart) {
+        setVisibleThumbStart(selectedImageIndex)
+      }
+      // If selected image is after visible range, scroll to show it
+      else if (selectedImageIndex >= visibleThumbStart + visibleThumbCount) {
+        setVisibleThumbStart(Math.max(0, selectedImageIndex - visibleThumbCount + 1))
+      }
+    }
+  }, [selectedImageIndex, truckImages.length, visibleThumbCount, visibleThumbStart, truck?.imageUrl])
 
   const displayPrice = (price: string | number | undefined | null) => {
     if (price === undefined || price === null) return '₹0'
@@ -768,7 +786,16 @@ export default function TruckDetailsPage() {
             />
             <button 
               className="td-nav-btn prev"
-              onClick={() => setSelectedImageIndex(prev => prev > 0 ? prev - 1 : gallery.length - 1)}
+              onClick={() => {
+                const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : gallery.length - 1
+                setSelectedImageIndex(newIndex)
+                // Adjust visible thumbnails to keep selected image in view
+                if (newIndex < visibleThumbStart) {
+                  setVisibleThumbStart(newIndex)
+                } else if (newIndex >= visibleThumbStart + visibleThumbCount) {
+                  setVisibleThumbStart(Math.max(0, newIndex - visibleThumbCount + 1))
+                }
+              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M15 18l-6-6 6-6"/>
@@ -776,7 +803,16 @@ export default function TruckDetailsPage() {
             </button>
             <button 
               className="td-nav-btn next"
-              onClick={() => setSelectedImageIndex(prev => prev < gallery.length - 1 ? prev + 1 : 0)}
+              onClick={() => {
+                const newIndex = selectedImageIndex < gallery.length - 1 ? selectedImageIndex + 1 : 0
+                setSelectedImageIndex(newIndex)
+                // Adjust visible thumbnails to keep selected image in view
+                if (newIndex < visibleThumbStart) {
+                  setVisibleThumbStart(newIndex)
+                } else if (newIndex >= visibleThumbStart + visibleThumbCount) {
+                  setVisibleThumbStart(Math.max(0, newIndex - visibleThumbCount + 1))
+                }
+              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M9 18l6-6-6-6"/>
@@ -798,16 +834,52 @@ export default function TruckDetailsPage() {
               ))}
             </div>
           </div>
-          <div className="td-thumbs">
-            {gallery.map((img, idx) => (
+          <div className="td-thumbs-container">
+            {gallery.length > visibleThumbCount && (
               <button
-                key={idx}
-                className={`td-thumb ${idx === selectedImageIndex ? 'active' : ''}`}
-                onClick={() => setSelectedImageIndex(idx)}
+                className="td-thumbs-nav-btn td-thumbs-prev"
+                onClick={() => {
+                  const newStart = Math.max(0, visibleThumbStart - 1)
+                  setVisibleThumbStart(newStart)
+                }}
+                disabled={visibleThumbStart === 0}
+                aria-label="Scroll thumbnails left"
               >
-                <Image src={img} alt="" fill style={{ objectFit: 'cover' }} unoptimized />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
               </button>
-            ))}
+            )}
+          <div className="td-thumbs">
+              {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((img, relativeIdx) => {
+                const absoluteIdx = visibleThumbStart + relativeIdx
+                return (
+              <button
+                    key={absoluteIdx}
+                    className={`td-thumb ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
+                    onClick={() => setSelectedImageIndex(absoluteIdx)}
+                  >
+                    <Image src={img} alt={`Thumbnail ${absoluteIdx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+              </button>
+                )
+              })}
+            </div>
+            {gallery.length > visibleThumbCount && (
+              <button
+                className="td-thumbs-nav-btn td-thumbs-next"
+                onClick={() => {
+                  const maxStart = Math.max(0, gallery.length - visibleThumbCount)
+                  const newStart = Math.min(maxStart, visibleThumbStart + 1)
+                  setVisibleThumbStart(newStart)
+                }}
+                disabled={visibleThumbStart >= gallery.length - visibleThumbCount}
+                aria-label="Scroll thumbnails right"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
