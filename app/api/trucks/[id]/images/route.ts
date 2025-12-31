@@ -64,10 +64,14 @@ async function fetchImagesFromSupabaseStorage(
   try {
     const BUCKET_NAME = 'truck-images'
     
+    console.log(`[Storage] Fetching images from bucket "${BUCKET_NAME}" for folder: ${folderName}`)
+    
     // Normalize folder name for search (e.g., "HR 38 W 2162" -> "HR-38-W-2162")
     const searchPattern = folderName.replace(/\s+/g, '-').toUpperCase()
+    console.log(`[Storage] Search pattern: ${searchPattern}`)
     
     // List all files in the bucket
+    console.log(`[Storage] Listing files in bucket "${BUCKET_NAME}"...`)
     const { data: files, error } = await supabase.storage
       .from(BUCKET_NAME)
       .list('', {
@@ -76,13 +80,18 @@ async function fetchImagesFromSupabaseStorage(
       })
 
     if (error) {
-      console.error('Error listing Supabase Storage files:', error)
+      console.error(`[Storage] ❌ Error listing Supabase Storage files:`, error)
+      console.error(`[Storage] Error message: ${error.message}`)
+      console.error(`[Storage] Error status: ${error.statusCode || 'N/A'}`)
       return []
     }
 
     if (!files || files.length === 0) {
+      console.log(`[Storage] ⚠️ No files found in bucket "${BUCKET_NAME}"`)
       return []
     }
+
+    console.log(`[Storage] ✅ Found ${files.length} total files in bucket`)
 
     // Normalize folder name for multiple pattern matching
     const folderNameUpper = folderName.toUpperCase()
@@ -112,11 +121,16 @@ async function fetchImagesFromSupabaseStorage(
     // Remove duplicate URLs
     const uniqueUrls = Array.from(new Set(matchingFiles))
     
-    console.log(`Found ${uniqueUrls.length} unique images for folder: ${folderName} (from ${matchingFiles.length} total matches)`)
+    console.log(`[Storage] ✅ Found ${uniqueUrls.length} unique images for folder: ${folderName} (from ${matchingFiles.length} total matches)`)
+    if (uniqueUrls.length > 0) {
+      console.log(`[Storage] Sample URLs (first 3):`, uniqueUrls.slice(0, 3))
+    }
     
     return uniqueUrls
-  } catch (error) {
-    console.error('Error fetching images from Supabase Storage:', error)
+  } catch (error: any) {
+    console.error(`[Storage] ❌ Error fetching images from Supabase Storage:`, error)
+    console.error(`[Storage] Error message: ${error?.message || 'Unknown error'}`)
+    console.error(`[Storage] Error stack:`, error?.stack)
     return []
   }
 }
@@ -137,24 +151,58 @@ export async function GET(
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
 
+    // Enhanced logging for debugging
+    console.log(`[Images API] Fetching images for truck ID: ${truckId}`)
+    console.log(`[Images API] Supabase URL configured: ${supabaseUrl ? '✅ Yes' : '❌ No'}`)
+    console.log(`[Images API] Supabase Key configured: ${supabaseAnonKey ? '✅ Yes (length: ' + supabaseAnonKey.length + ')' : '❌ No'}`)
+
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Supabase credentials not found in environment variables')
-      return NextResponse.json({ images: [] })
+      console.error('[Images API] ❌ Supabase credentials not found in environment variables')
+      console.error(`[Images API] NEXT_PUBLIC_SUPABASE_URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Not set'}`)
+      console.error(`[Images API] SUPABASE_URL: ${process.env.SUPABASE_URL ? 'Set' : 'Not set'}`)
+      console.error(`[Images API] NEXT_PUBLIC_SUPABASE_ANON_KEY: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Not set'}`)
+      console.error(`[Images API] SUPABASE_ANON_KEY: ${process.env.SUPABASE_ANON_KEY ? 'Set' : 'Not set'}`)
+      return NextResponse.json({ 
+        images: [],
+        error: 'Supabase credentials not configured',
+        debug: {
+          hasUrl: !!supabaseUrl,
+          hasKey: !!supabaseAnonKey
+        }
+      }, { status: 500 })
     }
 
     const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+    console.log(`[Images API] Supabase client created, fetching truck data...`)
     const { data: truck, error } = await supabase
       .from('trucks')
       .select('id, name, image_url')
       .eq('id', truckId)
       .single()
 
-    if (error || !truck) {
-      console.error(`Truck ${truckId} not found or error:`, error?.message)
-      return NextResponse.json({ images: [] })
+    if (error) {
+      console.error(`[Images API] ❌ Error fetching truck ${truckId}:`, error.message)
+      console.error(`[Images API] Error details:`, error)
+      return NextResponse.json({ 
+        images: [],
+        error: error.message,
+        truckId
+      }, { status: 500 })
     }
+
+    if (!truck) {
+      console.error(`[Images API] ❌ Truck ${truckId} not found in database`)
+      return NextResponse.json({ 
+        images: [],
+        error: 'Truck not found',
+        truckId
+      }, { status: 404 })
+    }
+
+    console.log(`[Images API] ✅ Truck found: ${truck.name} (ID: ${truck.id})`)
+    console.log(`[Images API] Truck image_url: ${truck.image_url ? 'Set' : 'Not set'}`)
 
     // Try to get images from HR folder mapping (if file exists)
     const folderName = extractFolderName(truck.name, truck.image_url || '')
