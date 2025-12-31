@@ -206,37 +206,69 @@ export async function GET(
 
     // Try to get images from HR folder mapping (if file exists)
     const folderName = extractFolderName(truck.name, truck.image_url || '')
+    console.log(`[Images API] Extracted folder name: "${folderName}" from truck name: "${truck.name}", image_url: "${truck.image_url || 'N/A'}"`)
     
     if (folderName) {
       // First, try to get images from mapping file (if available)
+      console.log(`[Images API] Attempting to read mapping file...`)
       const mapping = getHRFolderImages()
+      console.log(`[Images API] Mapping file read: ${mapping ? mapping.length + ' entries' : 'not found or empty'}`)
+      
       if (mapping && mapping.length > 0) {
+        // Try multiple normalization strategies
+        const normalizedTarget = folderName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase()
+        const normalizedTargetHyphen = folderName.replace(/\s+/g, '-').toUpperCase()
+        const normalizedTargetNoSpace = folderName.replace(/\s+/g, '').toUpperCase()
+        
+        console.log(`[Images API] Searching for folder patterns: "${normalizedTarget}", "${normalizedTargetHyphen}", "${normalizedTargetNoSpace}"`)
+        
         const folderImages = mapping
           .filter((item: any) => {
-            // Normalize folder names for comparison
-            const itemFolder = item.folderName?.replace(/-/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase()
-            const targetFolder = folderName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase()
-            return itemFolder === targetFolder
+            if (!item.folderName) return false
+            
+            // Normalize folder names for comparison - try multiple formats
+            const itemFolder = item.folderName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase()
+            const itemFolderHyphen = item.folderName.replace(/\s+/g, '-').toUpperCase()
+            const itemFolderNoSpace = item.folderName.replace(/\s+/g, '').toUpperCase()
+            
+            // Match any of the normalized formats
+            return itemFolder === normalizedTarget || 
+                   itemFolder === normalizedTargetHyphen ||
+                   itemFolder === normalizedTargetNoSpace ||
+                   itemFolderHyphen === normalizedTarget ||
+                   itemFolderHyphen === normalizedTargetHyphen ||
+                   itemFolderNoSpace === normalizedTarget ||
+                   itemFolderNoSpace === normalizedTargetNoSpace
           })
           .map((item: any) => item.supabaseUrl)
           .filter((url: string) => url) // Remove any null/undefined URLs
 
+        console.log(`[Images API] Found ${folderImages.length} matching images in mapping file`)
+
         if (folderImages.length > 0) {
           // Remove duplicate URLs
           const uniqueFolderImages = Array.from(new Set(folderImages))
-          console.log(`Found ${uniqueFolderImages.length} unique images from mapping file for folder: ${folderName} (from ${folderImages.length} total)`)
+          console.log(`[Images API] ✅ Returning ${uniqueFolderImages.length} unique images from mapping file for folder: ${folderName} (from ${folderImages.length} total)`)
           return NextResponse.json({ images: uniqueFolderImages })
+        } else {
+          console.log(`[Images API] ⚠️ No matching images found in mapping file for folder: ${folderName}`)
         }
+      } else {
+        console.log(`[Images API] ⚠️ Mapping file not available or empty`)
       }
 
       // If mapping file doesn't have images, fetch directly from Supabase Storage
-      console.log(`Mapping file not available or empty, fetching from Supabase Storage for folder: ${folderName}`)
+      console.log(`[Images API] Fetching from Supabase Storage for folder: ${folderName}`)
       const storageImages = await fetchImagesFromSupabaseStorage(supabase, folderName)
       
       if (storageImages.length > 0) {
-        console.log(`Found ${storageImages.length} images from Supabase Storage for folder: ${folderName}`)
+        console.log(`[Images API] ✅ Found ${storageImages.length} images from Supabase Storage for folder: ${folderName}`)
         return NextResponse.json({ images: storageImages })
+      } else {
+        console.log(`[Images API] ⚠️ No images found in Supabase Storage for folder: ${folderName}`)
       }
+    } else {
+      console.log(`[Images API] ⚠️ Could not extract folder name from truck name: "${truck.name}"`)
     }
 
     // Fallback: return single image (ensure it's not duplicated)
