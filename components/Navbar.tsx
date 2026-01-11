@@ -288,7 +288,7 @@ const searchSuggestions = [
           )}
         </form>
 
-        <ul className={`nav-menu ${mounted && isMenuOpen ? 'active' : ''}`} aria-label="Primary" suppressHydrationWarning>
+        <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`} aria-label="Primary" suppressHydrationWarning>
           {/* Buy Trucks - with dropdown */}
           <li 
             className="nav-item dropdown"
@@ -422,7 +422,7 @@ const searchSuggestions = [
         </ul>
         <button
           type="button"
-          className={`hamburger ${mounted && isMenuOpen ? 'active' : ''}`}
+          className={`hamburger ${isMenuOpen ? 'active' : ''}`}
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
@@ -442,7 +442,7 @@ const searchSuggestions = [
             }
           }}
           aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={mounted ? isMenuOpen : false}
+          aria-expanded={isMenuOpen}
           suppressHydrationWarning
         >
           <span className="bar"></span>
