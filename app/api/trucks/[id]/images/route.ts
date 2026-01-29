@@ -128,7 +128,7 @@ async function fetchImagesFromSupabaseStorage(
       .filter((url: string) => url) // Remove any null/undefined URLs
 
     // Remove duplicate URLs
-    const uniqueUrls = Array.from(new Set(matchingFiles))
+    const uniqueUrls: string[] = Array.from(new Set(matchingFiles)) as string[]
     
     console.log(`[Storage] ✅ Found ${uniqueUrls.length} unique images for folder: ${folderName} (from ${matchingFiles.length} total matches)`)
     if (uniqueUrls.length > 0) {
