@@ -20,12 +20,12 @@ export default function TrustBar() {
             logos={partnerLogos}
             speed={30}
             direction="left"
-            logoHeight={80}
+            logoHeight={70}
             gap={60}
             pauseOnHover
             scaleOnHover
             fadeOut
-            fadeOutColor="rgba(248, 249, 250, 1)"
+            fadeOutColor="rgba(255, 255, 255, 1)"
             ariaLabel="Our trusted partners"
           />
         </div>

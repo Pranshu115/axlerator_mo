@@ -810,91 +810,99 @@ export default function TruckDetailsPage() {
               </svg>
               Axlerator Assured
             </div>
-            <div className="td-image-dots-container">
+          </div>
+          
+          {/* Image Dots - Moved below the image */}
+          <div className="td-image-dots-container">
+            {gallery.length > visibleThumbCount && (
+              <div className="td-image-dots-wrapper">
+                {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((_, relativeIdx) => {
+                  const absoluteIdx = visibleThumbStart + relativeIdx
+                  return (
+                    <button 
+                      key={absoluteIdx}
+                      className={`td-dot ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedImageIndex(absoluteIdx)
+                        // Keep the dot in view if needed
+                        if (absoluteIdx < visibleThumbStart) {
+                          setVisibleThumbStart(absoluteIdx)
+                        } else if (absoluteIdx >= visibleThumbStart + visibleThumbCount) {
+                          setVisibleThumbStart(Math.max(0, absoluteIdx - visibleThumbCount + 1))
+                        }
+                      }}
+                      aria-label={`Go to image ${absoluteIdx + 1}`}
+                    />
+                  )
+                })}
+              </div>
+            )}
+            {gallery.length <= visibleThumbCount && (
+              <div className="td-image-dots-wrapper">
+                {gallery.map((_, idx) => (
+                  <button 
+                    key={idx}
+                    className={`td-dot ${idx === selectedImageIndex ? 'active' : ''}`}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    aria-label={`Go to image ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Thumbnails - Only show if there are images */}
+          {gallery.length > 0 && (
+            <div className="td-thumbs-container">
               {gallery.length > visibleThumbCount && (
-                <div className="td-image-dots-wrapper">
-                  {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((_, relativeIdx) => {
-                    const absoluteIdx = visibleThumbStart + relativeIdx
-                    return (
-                      <button 
-                        key={absoluteIdx}
-                        className={`td-dot ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
-                        onClick={() => {
-                          setSelectedImageIndex(absoluteIdx)
-                          // Keep the dot in view if needed
-                          if (absoluteIdx < visibleThumbStart) {
-                            setVisibleThumbStart(absoluteIdx)
-                          } else if (absoluteIdx >= visibleThumbStart + visibleThumbCount) {
-                            setVisibleThumbStart(Math.max(0, absoluteIdx - visibleThumbCount + 1))
-                          }
-                        }}
-                        aria-label={`Go to image ${absoluteIdx + 1}`}
-                      />
-                    )
-                  })}
-                </div>
+                <button
+                  className="td-thumbs-nav-btn td-thumbs-prev"
+                  onClick={() => {
+                    const newStart = Math.max(0, visibleThumbStart - 1)
+                    setVisibleThumbStart(newStart)
+                  }}
+                  disabled={visibleThumbStart === 0}
+                  aria-label="Scroll thumbnails left"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                  </svg>
+                </button>
               )}
-              {gallery.length <= visibleThumbCount && (
-                <div className="td-image-dots-wrapper">
-              {gallery.map((_, idx) => (
-                <button 
-                  key={idx}
-                  className={`td-dot ${idx === selectedImageIndex ? 'active' : ''}`}
-                  onClick={() => setSelectedImageIndex(idx)}
-                      aria-label={`Go to image ${idx + 1}`}
-                />
-              ))}
-            </div>
+              <div className="td-thumbs">
+                {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((img, relativeIdx) => {
+                  const absoluteIdx = visibleThumbStart + relativeIdx
+                  // Only render if image exists
+                  if (!img || img === '/placeholder.jpg') return null
+                  return (
+                    <button
+                      key={absoluteIdx}
+                      className={`td-thumb ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
+                      onClick={() => setSelectedImageIndex(absoluteIdx)}
+                    >
+                      <Image src={img} alt={`Thumbnail ${absoluteIdx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                    </button>
+                  )
+                })}
+              </div>
+              {gallery.length > visibleThumbCount && (
+                <button
+                  className="td-thumbs-nav-btn td-thumbs-next"
+                  onClick={() => {
+                    const maxStart = Math.max(0, gallery.length - visibleThumbCount)
+                    const newStart = Math.min(maxStart, visibleThumbStart + 1)
+                    setVisibleThumbStart(newStart)
+                  }}
+                  disabled={visibleThumbStart >= gallery.length - visibleThumbCount}
+                  aria-label="Scroll thumbnails right"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </button>
               )}
-          </div>
-          </div>
-          <div className="td-thumbs-container">
-            {gallery.length > visibleThumbCount && (
-              <button
-                className="td-thumbs-nav-btn td-thumbs-prev"
-                onClick={() => {
-                  const newStart = Math.max(0, visibleThumbStart - 1)
-                  setVisibleThumbStart(newStart)
-                }}
-                disabled={visibleThumbStart === 0}
-                aria-label="Scroll thumbnails left"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 18l-6-6 6-6"/>
-                </svg>
-              </button>
-            )}
-          <div className="td-thumbs">
-              {gallery.slice(visibleThumbStart, visibleThumbStart + visibleThumbCount).map((img, relativeIdx) => {
-                const absoluteIdx = visibleThumbStart + relativeIdx
-                return (
-              <button
-                    key={absoluteIdx}
-                    className={`td-thumb ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
-                    onClick={() => setSelectedImageIndex(absoluteIdx)}
-                  >
-                    <Image src={img} alt={`Thumbnail ${absoluteIdx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
-              </button>
-                )
-              })}
             </div>
-            {gallery.length > visibleThumbCount && (
-              <button
-                className="td-thumbs-nav-btn td-thumbs-next"
-                onClick={() => {
-                  const maxStart = Math.max(0, gallery.length - visibleThumbCount)
-                  const newStart = Math.min(maxStart, visibleThumbStart + 1)
-                  setVisibleThumbStart(newStart)
-                }}
-                disabled={visibleThumbStart >= gallery.length - visibleThumbCount}
-                aria-label="Scroll thumbnails right"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 18l6-6-6-6"/>
-                </svg>
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Product Info */}

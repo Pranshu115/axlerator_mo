@@ -2,10 +2,40 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow text selection for content */
+p, span, div, h1, h2, h3, h4, h5, h6, li, td, th {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: auto;
+}
+
+/* Prevent double-tap zoom on interactive elements */
+button, a, input, select, textarea, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  touch-action: manipulation;
 }
 
 body {
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Hide Next.js logo and any circular N icons that overlap navigation - More aggressive rules */
@@ -184,7 +214,7 @@ div[class*="nprogress"],
     padding: 5rem 1rem 2rem;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
@@ -246,69 +276,192 @@ div[class*="nprogress"],
 
 /* Hero search card (TruckJunction / Spinny style) */
 .hero-search-card {
-  margin-top: 1.25rem;
+  margin-top: calc(0.5rem + 1vw);
   background: #ffffff;
-  border-radius: 18px;
-  padding: 1rem 0.9rem 1.1rem;
+  border-radius: calc(12px + 0.8vw);
+  padding: calc(0.6rem + 0.6vw) calc(0.7rem + 0.4vw) calc(0.7rem + 0.6vw);
   box-shadow: 0 8px 30px rgba(15, 23, 42, 0.18);
   border: 1px solid rgba(148, 163, 184, 0.2);
-  margin-bottom: 1.5rem;
+  margin-bottom: calc(0.5rem + 1vw);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-card {
+    padding: calc(0.5rem + 0.4vw) calc(0.6rem + 0.3vw) calc(0.6rem + 0.4vw);
+    border-radius: calc(12px + 0.5vw);
+    margin-top: calc(0.3rem + 0.5vw);
+    margin-bottom: calc(0.2rem + 0.5vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-card {
+    padding: calc(0.45rem + 0.3vw) calc(0.55rem + 0.2vw) calc(0.55rem + 0.3vw);
+    border-radius: calc(12px + 0.3vw);
+    margin-top: calc(0.25rem + 0.3vw);
+    margin-bottom: calc(0.15rem + 0.3vw);
+  }
 }
 
 .hero-search-tabs {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-radius: 999px;
-  padding: 0.15rem;
-  background: #f3f4f6;
-  margin-bottom: 0.85rem;
+  justify-content: flex-start;
+  gap: calc(0.5rem + 1.2vw);
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: calc(0.3rem + 0.3vw);
+  margin-bottom: calc(0.4rem + 0.6vw);
+  background: transparent;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-tabs {
+    gap: calc(0.6rem + 0.5vw);
+    padding-bottom: calc(0.25rem + 0.2vw);
+    margin-bottom: calc(0.3rem + 0.4vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-tabs {
+    gap: calc(0.6rem + 0.3vw);
+    padding-bottom: calc(0.22rem + 0.15vw);
+    margin-bottom: calc(0.28rem + 0.3vw);
+  }
 }
 
 .hero-search-tab {
-  flex: 1;
+  flex: 0 0 auto;
   border: none;
   background: transparent;
-  padding: 0.45rem 0.4rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  padding: calc(0.3rem + 0.3vw) calc(0.5rem + 0.4vw);
+  border-radius: 4px;
+  font-size: calc(0.6rem + 0.3vw);
+  font-weight: 600;
   letter-spacing: 0.03em;
-  color: #6b7280;
+  color: #9ca3af;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-tab {
+    padding: calc(0.28rem + 0.2vw) calc(0.45rem + 0.2vw);
+    font-size: calc(0.58rem + 0.2vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-tab {
+    padding: calc(0.25rem + 0.15vw) calc(0.4rem + 0.15vw);
+    font-size: calc(0.55rem + 0.15vw);
+  }
 }
 
 .hero-search-tab.active {
-  background: #ffffff;
-  color: #111827;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+  background: #374151;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.hero-search-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: clamp(-0.3rem, -1.5vw, -0.5rem);
+  left: 0;
+  right: 0;
+  height: clamp(1.5px, 0.5vw, 2px);
+  background: #374151;
+  border-radius: 2px;
 }
 
 .hero-search-form {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: calc(0.25rem + 0.5vw);
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-form {
+    gap: calc(0.22rem + 0.3vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-form {
+    gap: calc(0.2rem + 0.2vw);
+  }
 }
 
 .hero-search-field {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: calc(0.1rem + 0.2vw);
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-field {
+    gap: calc(0.08rem + 0.15vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-field {
+    gap: calc(0.06rem + 0.1vw);
+  }
 }
 
 .hero-search-label {
-  font-size: 0.75rem;
+  font-size: calc(0.65rem + 0.2vw);
   font-weight: 600;
   color: #6b7280;
+  line-height: 1.2;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-label {
+    font-size: calc(0.62rem + 0.15vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-label {
+    font-size: calc(0.6rem + 0.1vw);
+  }
 }
 
 .hero-search-select {
   width: 100%;
-  padding: 0.7rem 0.75rem;
-  border-radius: 12px;
+  padding: calc(0.4rem + 0.5vw) calc(0.5rem + 0.5vw);
+  border-radius: calc(8px + 0.5vw);
   border: 1px solid #d1d5db;
-  font-size: 0.9rem;
+  font-size: calc(0.7rem + 0.4vw);
   color: #111827;
   background: #f9fafb;
+  min-height: auto;
+  height: auto;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-select {
+    padding: calc(0.35rem + 0.3vw) calc(0.45rem + 0.3vw);
+    font-size: calc(0.68rem + 0.3vw);
+    border-radius: calc(8px + 0.3vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-select {
+    padding: calc(0.3rem + 0.2vw) calc(0.4rem + 0.2vw);
+    font-size: calc(0.65rem + 0.2vw);
+    border-radius: calc(8px + 0.2vw);
+  }
 }
 
 .hero-search-select:focus {
@@ -318,29 +471,65 @@ div[class*="nprogress"],
 }
 
 .hero-search-submit {
-  margin-top: 0.5rem;
+  margin-top: calc(0.2rem + 0.3vw);
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: calc(0.35rem + 0.6vw) calc(0.5rem + 0.6vw);
   border-radius: 999px;
   border: none;
-  font-size: 0.9rem;
+  font-size: calc(0.65rem + 0.4vw);
   font-weight: 700;
   background: #2563eb;
   color: #ffffff;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-submit {
+    padding: calc(0.3rem + 0.4vw) calc(0.45rem + 0.4vw);
+    font-size: calc(0.62rem + 0.3vw);
+    margin-top: calc(0.18rem + 0.2vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-submit {
+    padding: calc(0.28rem + 0.3vw) calc(0.4rem + 0.3vw);
+    font-size: calc(0.6rem + 0.2vw);
+    margin-top: calc(0.15rem + 0.15vw);
+  }
 }
 
 .hero-search-link {
-  margin-top: 0.35rem;
+  margin-top: calc(0.15rem + 0.2vw);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  font-size: 0.85rem;
+  font-size: calc(0.65rem + 0.3vw);
   font-weight: 600;
   color: #2563eb;
   text-decoration: none;
-  padding: 0.5rem 0;
-  margin-bottom: 0.5rem;
+  padding: calc(0.3rem + 0.3vw) 0;
+  margin-bottom: calc(0.3rem + 0.3vw);
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-search-link {
+    font-size: calc(0.62rem + 0.2vw);
+    padding: calc(0.28rem + 0.2vw) 0;
+    margin-top: calc(0.12rem + 0.15vw);
+    margin-bottom: calc(0.12rem + 0.15vw);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-search-link {
+    font-size: calc(0.6rem + 0.15vw);
+    padding: calc(0.25rem + 0.15vw) 0;
+    margin-top: calc(0.1rem + 0.1vw);
+    margin-bottom: calc(0.1rem + 0.1vw);
+  }
 }
   .browse-trucks-container {
     flex-direction: column;
@@ -908,18 +1097,30 @@ div[class*="nprogress"],
   z-index: 2;
   color: #fff;
   max-width: 900px;
-  padding: 2rem;
+  padding: calc(1rem + 2vw);
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-title {
-  font-size: 5rem;
+  font-size: clamp(1.5rem, 8vw, 5rem);
   font-weight: 300;
-  margin-bottom: 1.5rem;
+  margin-bottom: calc(0.75rem + 1.5vw);
   line-height: 1.2;
   animation: fadeInUp 1s ease;
   letter-spacing: -1px;
   display: block;
-  color: #ffffff;
+  color: #ffffff !important;
+  word-wrap: break-word;
+  hyphens: auto;
+  text-align: center;
+  width: 100%;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .hero-brand {
@@ -928,8 +1129,8 @@ div[class*="nprogress"],
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
-  margin-bottom: 2.5rem;
+  font-size: clamp(0.85rem, 3vw, 1.25rem);
+  margin-bottom: calc(1rem + 2vw);
   font-weight: 300;
   animation: fadeInUp 1s ease 0.2s;
   animation-fill-mode: both;
@@ -937,7 +1138,15 @@ div[class*="nprogress"],
   margin-left: auto;
   margin-right: auto;
   line-height: 1.6;
-  color: #ffffff;
+  color: #ffffff !important;
+  word-wrap: break-word;
+  hyphens: auto;
+  padding: 0 calc(0.5rem + 1vw);
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .hero-buttons {
@@ -1100,21 +1309,33 @@ div[class*="nprogress"],
     border: 1px solid #e5e7eb !important;
     font-weight: 500 !important;
     font-size: 1rem !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 0.5rem;
     width: calc(100% - 2rem) !important;
     max-width: 400px !important;
     min-height: 48px !important;
     height: 48px !important;
-    border-radius: 999px;
-    margin: 0.25rem auto !important;
+    border-radius: 0 !important;
+    margin: 0 auto !important;
     margin-bottom: 0 !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-    text-align: center;
-    line-height: 1.5;
-    box-sizing: border-box;
+    box-shadow: none !important;
+    text-align: center !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    border-top: none !important;
+    position: relative !important;
+  }
+
+  .nav-link:first-child {
+    border-top: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
+  }
+
+  .nav-link:last-child {
+    border-bottom: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
   }
 
   .dropdown .nav-link {
@@ -1126,12 +1347,12 @@ div[class*="nprogress"],
   .dropdown-link-wrapper {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: calc(100% - 2rem);
     max-width: 400px;
     gap: 0;
-    margin: 0.25rem auto;
-    margin-bottom: 0;
+    margin: 0 auto !important;
+    margin-bottom: 0 !important;
     order: 1;
     position: relative;
   }
@@ -1143,11 +1364,12 @@ div[class*="nprogress"],
     margin: 0 !important;
     margin-bottom: 0 !important;
     padding: 1.1rem 1.5rem !important;
-    padding-right: 2.5rem !important;
+    padding-right: 3rem !important;
     min-height: 48px !important;
     height: 48px !important;
     position: relative;
     box-sizing: border-box;
+    width: 100% !important;
   }
 
   .dropdown-arrow-btn {
@@ -1182,6 +1404,15 @@ div[class*="nprogress"],
 
   .nav-item:not(.dropdown) .nav-link {
     justify-content: center !important;
+    text-align: center !important;
+    width: calc(100% - 2rem) !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+  }
+
+  .nav-item .nav-link {
+    justify-content: center !important;
+    text-align: center !important;
     text-align: center !important;
   }
 
@@ -1431,7 +1662,7 @@ div[class*="nprogress"],
 
 /* Trust Bar Section */
 .trust-bar-section {
-  background: #f8f9fa;
+  background: #ffffff;
   padding: 4rem 0;
   width: 100%;
 }
@@ -1444,7 +1675,7 @@ div[class*="nprogress"],
 
 .trust-bar-heading {
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #2c3e50;
   margin-bottom: 3rem;
@@ -1456,13 +1687,76 @@ div[class*="nprogress"],
   margin: 0 auto;
 }
 
+.logo-loop-container {
+  position: relative;
+  overflow: hidden !important;
+  width: 100%;
+  min-height: 110px;
+  height: auto !important;
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.logo-loop-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: visible;
+  padding: 10px 0;
+}
+
+.logo-loop-track {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+  height: 100%;
+}
+
+.logo-loop-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.logo-loop-item img {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: brightness(1) contrast(1);
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-loop-fade-left,
+.logo-loop-fade-right {
+  z-index: 2;
+}
+
+.trust-bar-logos {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: visible !important;
+  min-height: 110px;
+  padding: 1.5rem 0;
+}
+
 @media screen and (max-width: 768px) {
   .trust-bar-section {
     padding: 3rem 0;
   }
 
   .trust-bar-heading {
-    font-size: 1.5rem;
+    font-size: 1rem;
     margin-bottom: 2rem;
   }
 }
@@ -1473,7 +1767,7 @@ div[class*="nprogress"],
   }
 
   .trust-bar-heading {
-    font-size: 1.25rem;
+    font-size: 0.875rem;
     margin-bottom: 1.5rem;
   }
 }
@@ -4290,7 +4584,19 @@ body:has(.contact-page) .search-icon,
   right: 0;
   bottom: 0;
   background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.sell-truck-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 0;
 }
 
 .sell-truck-hero-content {
@@ -4298,7 +4604,7 @@ body:has(.contact-page) .search-icon,
   margin: 0 auto;
   text-align: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .sell-truck-hero-title {
@@ -8227,26 +8533,24 @@ body:has(.contact-page) .search-icon,
 }
 
 .td-image-dots-container {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 400px;
-  padding: 0 1rem;
+  max-width: 100%;
+  padding: 1rem;
+  margin-top: 0.5rem;
 }
 
 .td-image-dots-wrapper {
   display: flex;
   gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
   border-radius: 20px;
-  backdrop-filter: blur(4px);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .td-dot {
@@ -10956,36 +11260,61 @@ body:has(.contact-page) .search-icon,
 
   /* Hero Section Mobile */
   .hero-section {
-    height: 70vh;
-    min-height: 500px;
-    padding-top: 60px;
-    padding-bottom: 80px;
-    overflow-y: auto;
+    height: auto;
+    min-height: 60vh;
+    max-height: 100vh;
+    padding-top: calc(1rem + 2vw);
+    padding-bottom: calc(1rem + 2vw);
+    padding-left: 0;
+    padding-right: 0;
+    overflow-y: visible;
     overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .hero-search-card {
-    padding-bottom: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .hero-search-link {
-    margin-bottom: 0.75rem;
-    padding: 0.75rem 0;
+  .hero-content {
+    padding: calc(1rem + 2vw) calc(0.75rem + 1vw) calc(1rem + 2vw);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
   }
 
   .hero-title {
-    font-size: 2rem !important;
+    font-size: clamp(1.3rem, 7vw, 2rem) !important;
     line-height: 1.2;
-    padding: 0 1rem;
-    margin-bottom: 1rem;
+    padding: 0 calc(0.5rem + 0.5vw);
+    margin-bottom: calc(0.5rem + 0.8vw);
+    letter-spacing: -0.5px;
+    word-wrap: break-word;
+    hyphens: auto;
+    color: #ffffff !important;
+    text-align: center;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   .hero-subtitle {
-    font-size: 1rem !important;
-    padding: 0 1rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
+    font-size: clamp(0.75rem, 2.5vw, 1rem) !important;
+    padding: 0 calc(0.5rem + 0.5vw);
+    margin-bottom: calc(0.75rem + 1vw);
+    line-height: 1.4;
+    word-wrap: break-word;
+    hyphens: auto;
+    color: #ffffff !important;
+    text-align: center;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   .hero-buttons {
@@ -11008,7 +11337,7 @@ body:has(.contact-page) .search-icon,
   }
 
   .trust-bar-heading {
-    font-size: 1.25rem;
+    font-size: 0.875rem;
     margin-bottom: 1.5rem;
   }
 
@@ -11549,29 +11878,61 @@ body:has(.contact-page) .search-icon,
 @media screen and (max-width: 480px) {
   /* Extra Small Mobile */
   .hero-section {
-    height: 65vh;
-    min-height: 450px;
-    padding-bottom: 80px;
-    overflow-y: auto;
+    height: auto;
+    min-height: 55vh;
+    max-height: 100vh;
+    padding-top: calc(0.8rem + 1.5vw);
+    padding-bottom: calc(0.8rem + 1.5vw);
+    padding-left: 0;
+    padding-right: 0;
+    overflow-y: visible;
     overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .hero-search-card {
-    padding-bottom: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .hero-search-link {
-    margin-bottom: 0.75rem;
-    padding: 0.75rem 0;
+  .hero-content {
+    padding: calc(0.8rem + 1.5vw) calc(0.6rem + 0.8vw) calc(0.8rem + 1.5vw);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
   }
 
   .hero-title {
-    font-size: 1.75rem !important;
+    font-size: clamp(1.2rem, 6.5vw, 1.8rem) !important;
+    line-height: 1.2;
+    margin-bottom: calc(0.4rem + 0.6vw);
+    padding: 0 calc(0.4rem + 0.4vw);
+    letter-spacing: -0.3px;
+    word-wrap: break-word;
+    hyphens: auto;
+    color: #ffffff !important;
+    text-align: center;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   .hero-subtitle {
-    font-size: 0.95rem !important;
+    font-size: clamp(0.7rem, 2.2vw, 0.9rem) !important;
+    margin-bottom: calc(0.6rem + 0.8vw);
+    line-height: 1.35;
+    padding: 0 calc(0.4rem + 0.4vw);
+    word-wrap: break-word;
+    hyphens: auto;
+    color: #ffffff !important;
+    text-align: center;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   .truck-card-image-apple {
@@ -11931,10 +12292,22 @@ body:has(.contact-page) .search-icon,
     font-size: 0.7rem;
   }
 
-  /* Adjust pages for bottom nav */
+  /* Adjust pages for bottom nav - ensure all pages have padding */
+  body {
+    padding-bottom: 80px !important;
+  }
+
   .browse-trucks-page,
-  body > div > main {
-    padding-bottom: 80px;
+  body > div > main,
+  main,
+  #__next > div {
+    padding-bottom: 80px !important;
+  }
+
+  /* Ensure all page containers have bottom padding */
+  [class*="page"],
+  [class*="container"]:not(.mobile-bottom-nav) {
+    padding-bottom: 80px !important;
   }
 
   /* Home page adjustments */
@@ -12382,5 +12755,1273 @@ body:has(.contact-page) .search-icon,
   .truck-card-cta-apple {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
+  }
+}
+
+/* ============================================
+   COMPREHENSIVE MOBILE FIXES - ENSURE ALL CONTENT IS VISIBLE
+   ============================================ */
+
+/* Base mobile fixes - apply to all mobile devices */
+@media screen and (max-width: 768px) {
+  /* Prevent zoom on input focus - CRITICAL for mobile */
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    touch-action: manipulation;
+  }
+
+  /* Prevent horizontal scrolling */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent double-tap zoom */
+  * {
+    touch-action: manipulation;
+  }
+
+  /* Ensure all text wraps properly */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Fix text overflow issues */
+  h1, h2, h3, h4, h5, h6, p, span, div, a, button, label, input, textarea, select {
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Ensure minimum readable font sizes */
+  body {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    line-height: 1.6 !important;
+  }
+
+  /* Fix all headings to be readable */
+  h1 {
+    font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+    line-height: 1.3 !important;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 4vw, 2rem) !important;
+    line-height: 1.3 !important;
+  }
+
+  h3 {
+    font-size: clamp(1.125rem, 3.5vw, 1.75rem) !important;
+    line-height: 1.4 !important;
+  }
+
+  h4 {
+    font-size: clamp(1rem, 3vw, 1.5rem) !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Ensure paragraphs are readable */
+  p {
+    font-size: clamp(0.9375rem, 2.5vw, 1rem) !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Fix all buttons to be touch-friendly */
+  button, .btn, a.button, input[type="submit"], input[type="button"] {
+    min-height: 44px !important; /* Apple's recommended touch target */
+    min-width: 44px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    touch-action: manipulation;
+  }
+
+  /* Fix all inputs and selects - MUST be 16px to prevent iOS zoom */
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents zoom on iOS - DO NOT CHANGE */
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border-radius: 8px !important;
+  }
+
+  /* Ensure select dropdowns don't zoom */
+  select {
+    font-size: 16px !important;
+    background-size: 20px 20px !important;
+  }
+
+  /* Fix search inputs specifically */
+  input[type="search"],
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"] {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+  }
+
+  /* Fix textarea */
+  textarea {
+    min-height: 100px !important;
+    resize: vertical;
+  }
+
+  /* Ensure all containers respect viewport */
+  .container, .container-fluid, section, div, article, main, aside {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix padding and margins to prevent overflow */
+  * {
+    box-sizing: border-box !important;
+  }
+
+  /* Fix images to not overflow */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+  }
+
+  /* Fix tables to be scrollable instead of overflowing */
+  table {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix any fixed width elements */
+  [style*="width"] {
+    max-width: 100% !important;
+  }
+
+  /* Ensure all text in cards is visible */
+  .card, .truck-card, .truck-card-apple {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Fix navigation to not hide content */
+  .navbar, nav {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  /* Fix modals and overlays */
+  .modal, .overlay, [class*="modal"], [class*="overlay"] {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix forms */
+  form {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .form-group, .form-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Fix grids to stack on mobile */
+  .grid, [class*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Fix flex containers */
+  .flex, [class*="flex"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Ensure all links are tappable */
+  a {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Fix dropdowns and selects */
+  select, .select, [class*="select"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  /* Fix search inputs */
+  input[type="search"], input[type="text"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  /* Fix price displays */
+  .price, [class*="price"] {
+    font-size: clamp(1.125rem, 4vw, 1.5rem) !important;
+    word-break: break-word !important;
+  }
+
+  /* Fix truck names and titles */
+  .truck-name, [class*="truck-name"], [class*="name"] {
+    font-size: clamp(0.9375rem, 3vw, 1.125rem) !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Fix location text */
+  .location, [class*="location"] {
+    font-size: clamp(0.8125rem, 2.5vw, 0.9375rem) !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Fix feature lists */
+  ul, ol {
+    padding-left: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  li {
+    font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0.5rem !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Fix badges and tags */
+  .badge, .tag, [class*="badge"], [class*="tag"] {
+    font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+    padding: 0.375rem 0.75rem !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Fix bottom navigation */
+  .mobile-bottom-nav {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0.5rem 0 !important;
+  }
+
+  .bottom-nav-item {
+    font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+    padding: 0.5rem 0.25rem !important;
+    min-height: 60px !important;
+  }
+
+  /* Fix footer */
+  footer, .footer {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 2rem 1rem !important;
+    font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+  }
+
+  /* Fix hero sections */
+  .hero-section, [class*="hero"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 2rem 1rem !important;
+  }
+
+  .hero-title, [class*="hero-title"] {
+    font-size: clamp(1.5rem, 6vw, 2.5rem) !important;
+    line-height: 1.3 !important;
+    word-wrap: break-word !important;
+  }
+
+  .hero-subtitle, [class*="hero-subtitle"] {
+    font-size: clamp(0.9375rem, 3vw, 1.125rem) !important;
+    line-height: 1.5 !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Fix section titles */
+  .section-title, [class*="section-title"] {
+    font-size: clamp(1.25rem, 4vw, 1.75rem) !important;
+    line-height: 1.3 !important;
+    word-wrap: break-word !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Fix descriptions */
+  .description, [class*="description"] {
+    font-size: clamp(0.9375rem, 2.5vw, 1rem) !important;
+    line-height: 1.6 !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Ensure all text in cards is visible */
+  .card-content, [class*="card-content"] {
+    padding: 1rem !important;
+  }
+
+  /* Fix statistics and numbers */
+  .stat-number, [class*="stat-number"] {
+    font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+  }
+
+  .stat-label, [class*="stat-label"] {
+    font-size: clamp(0.8125rem, 2.5vw, 0.9375rem) !important;
+  }
+
+  /* Fix breadcrumbs */
+  .breadcrumb, [class*="breadcrumb"] {
+    font-size: clamp(0.8125rem, 2.5vw, 0.9375rem) !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Fix tabs */
+  .tabs, [class*="tabs"], [class*="tab"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Fix any absolute positioned elements */
+  [style*="position: absolute"], [style*="position:fixed"] {
+    max-width: calc(100vw - 2rem) !important;
+  }
+
+  /* Ensure proper spacing */
+  section, .section {
+    padding: 2rem 1rem !important;
+    margin: 0 !important;
+  }
+
+  /* Fix containers */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Extra small mobile devices (phones in portrait) */
+@media screen and (max-width: 480px) {
+  /* Even smaller font sizes for very small screens */
+  body {
+    font-size: 15px !important;
+  }
+
+  h1 {
+    font-size: clamp(1.25rem, 6vw, 2rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(1.125rem, 5vw, 1.75rem) !important;
+  }
+
+  h3 {
+    font-size: clamp(1rem, 4vw, 1.5rem) !important;
+  }
+
+  p {
+    font-size: clamp(0.875rem, 3vw, 0.9375rem) !important;
+  }
+
+  /* Smaller padding for very small screens */
+  section, .section {
+    padding: 1.5rem 0.75rem !important;
+  }
+
+  .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Ensure buttons are still touch-friendly */
+  button, .btn, a.button {
+    min-height: 44px !important;
+    padding: 0.625rem 1.25rem !important;
+  }
+}
+
+/* Landscape orientation fixes */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  /* Adjust for landscape mode */
+  .hero-section {
+    min-height: auto !important;
+    padding: 1.5rem 1rem !important;
+  }
+
+  .mobile-bottom-nav {
+    height: 60px !important;
+  }
+}
+
+/* Fix for very small screens (iPhone SE, etc.) */
+@media screen and (max-width: 375px) {
+  body {
+    font-size: 14px !important;
+  }
+
+  h1 {
+    font-size: clamp(1.125rem, 7vw, 1.75rem) !important;
+  }
+
+  button, .btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Ensure viewport meta tag is respected */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific fixes */
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-font-smoothing: antialiased !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input, textarea, select {
+    -webkit-appearance: none !important;
+    font-size: 16px !important; /* Critical: prevents zoom on focus */
+    border-radius: 8px !important;
+  }
+
+  /* Prevent zoom on input focus */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    font-size: 16px !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* ============================================
+   PREVENT UNWANTED ZOOM ON MOBILE
+   ============================================ */
+
+/* Ensure viewport meta tag is respected */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific fixes */
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-font-smoothing: antialiased !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input, textarea, select {
+    -webkit-appearance: none !important;
+    font-size: 16px !important; /* Critical: prevents zoom on focus */
+    border-radius: 8px !important;
+  }
+
+  /* Prevent zoom on input focus */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    font-size: 16px !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* Additional mobile viewport fixes */
+@media screen and (max-width: 768px) {
+  /* Ensure proper scaling */
+  html {
+    font-size: 16px;
+  }
+
+  /* Prevent any zoom behavior */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+  }
+
+  /* Ensure body doesn't scale */
+  body {
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    -webkit-transform: scale(1) !important;
+  }
+
+  /* Fix for any elements that might cause zoom */
+  main, #__next, #__next > div {
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    -webkit-transform: scale(1) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  /* Prevent double-tap zoom on buttons and links */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ============================================
+   AGGRESSIVE MOBILE SCALING FIXES
+   ============================================ */
+
+/* Force proper scaling on all mobile devices */
+@media screen and (max-width: 768px) {
+  /* Reset any transforms that might cause zoom */
+  html {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    -webkit-transform: scale(1) !important;
+  }
+
+  body {
+    font-size: 16px !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    -webkit-transform: scale(1) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Ensure main container doesn't scale */
+  #__next,
+  #__next > div,
+  main,
+  [role="main"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    -webkit-transform: scale(1) !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix stepper and form containers */
+  .stepper-wrapper,
+  .sell-truck-container,
+  .sell-truck-form,
+  .step-content,
+  .options-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: scale(1) !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure form elements don't cause zoom */
+  .form-group,
+  .form-row,
+  .step-form-grid,
+  .step-form-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix select dropdowns - critical for preventing zoom */
+  select,
+  .custom-select,
+  [class*="select"] {
+    font-size: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+
+  /* Fix all inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"] {
+    font-size: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix option cards in stepper */
+  .option-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+  }
+
+  /* Fix hero sections */
+  .sell-truck-hero,
+  .hero-section {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix navbar */
+  .navbar,
+  .nav-container {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent any element from scaling */
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Exception for images - they should scale but not overflow */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Exception for SVG icons */
+  svg {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
+
+/* Extra small screens - even more aggressive */
+@media screen and (max-width: 480px) {
+  html {
+    font-size: 16px !important;
+  }
+
+  body {
+    font-size: 16px !important;
+  }
+
+  /* Ensure everything fits */
+  .sell-truck-hero-title,
+  .hero-title {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+    line-height: 1.3 !important;
+  }
+
+  .sell-truck-container,
+  .stepper-wrapper {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .step-content {
+    padding: 1rem 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .options-grid {
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .option-card {
+    width: 100% !important;
+    padding: 0.875rem !important;
+    font-size: 15px !important;
+  }
+}
+
+/* ============================================
+   STEPPER AND FORM MOBILE FIXES
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+  /* Stepper wrapper fixes */
+  .stepper-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+    box-sizing: border-box !important;
+    transform: scale(1) !important;
+  }
+
+  /* Step content container */
+  .step-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .step-content h2 {
+    font-size: clamp(1.25rem, 5vw, 1.75rem) !important;
+    line-height: 1.3 !important;
+    word-wrap: break-word !important;
+  }
+
+  .step-content p {
+    font-size: clamp(0.9375rem, 3vw, 1rem) !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Options grid - ensure it fits */
+  .options-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .options-grid.year-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .options-grid.fuel-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Option cards */
+  .option-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+    font-size: 16px !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .option-card.selected {
+    transform: scale(1) !important;
+  }
+
+  /* Form elements in stepper */
+  .step-form-grid,
+  .step-form-fields {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .step-form-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .step-form-group label {
+    font-size: 14px !important;
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .step-form-group input,
+  .step-form-group select,
+  .step-textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+    padding: 0.875rem !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+  }
+
+  .step-textarea {
+    min-height: 100px !important;
+    resize: vertical !important;
+  }
+
+  /* Custom select component */
+  .custom-select,
+  [class*="custom-select"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Sell truck form */
+  .sell-truck-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Stepper buttons */
+  .stepper-footer,
+  .stepper-buttons {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    gap: 1rem !important;
+  }
+
+  .stepper-footer button,
+  .stepper-buttons button {
+    flex: 1 !important;
+    font-size: 16px !important;
+    padding: 0.875rem 1.5rem !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Extra small screens */
+@media screen and (max-width: 480px) {
+  .step-content {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .options-grid {
+    gap: 0.5rem !important;
+  }
+
+  .option-card {
+    padding: 0.875rem !important;
+    font-size: 15px !important;
+  }
+
+  .sell-truck-form {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .form-section {
+    padding: 1rem 0 !important;
+  }
+}
+
+/* ============================================
+   ULTRA-AGGRESSIVE MOBILE ZOOM PREVENTION
+   ============================================ */
+
+/* Force no zoom on all mobile devices */
+@media screen and (max-width: 768px) {
+  /* Reset any browser zoom */
+  html {
+    zoom: 1 !important;
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  body {
+    zoom: 1 !important;
+    transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+  }
+
+  /* Force all containers to proper scale */
+  #__next,
+  #__next > div,
+  main,
+  [role="main"],
+  .page,
+  [class*="page"] {
+    zoom: 1 !important;
+    transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix hero sections */
+  .hero-section,
+  .sell-truck-hero,
+  [class*="hero"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix form containers */
+  .sell-truck-container,
+  .stepper-wrapper,
+  .sell-truck-form,
+  .step-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    box-sizing: border-box !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Fix all form elements */
+  .form-group,
+  .form-row,
+  .step-form-grid,
+  .options-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure inputs don't cause zoom */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix option cards */
+  .option-card {
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent any element from scaling */
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Exception for images */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* Extra aggressive for very small screens */
+@media screen and (max-width: 480px) {
+  html {
+    font-size: 16px !important;
+    zoom: 1 !important;
+    transform: scale(1) !important;
+  }
+
+  body {
+    font-size: 16px !important;
+    zoom: 1 !important;
+    transform: scale(1) !important;
+  }
+
+  /* Ensure everything fits */
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ============================================
+   FORCE PROPER MOBILE SCALING - NO ZOOM
+   ============================================ */
+
+/* Critical: Force 1:1 scaling on mobile */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific */
+  @media screen and (max-width: 768px) {
+    html {
+      -webkit-text-size-adjust: 100% !important;
+      font-size: 16px !important;
+      zoom: 1 !important;
+      transform: scale(1) !important;
+      -webkit-transform: scale(1) !important;
+    }
+
+    body {
+      -webkit-text-size-adjust: 100% !important;
+      font-size: 16px !important;
+      zoom: 1 !important;
+      transform: scale(1) !important;
+      -webkit-transform: scale(1) !important;
+    }
+
+    /* Force all inputs to 16px to prevent iOS zoom */
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+      -webkit-appearance: none !important;
+      transform: scale(1) !important;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      font-size: 16px !important;
+      transform: scale(1) !important;
+      zoom: 1 !important;
+    }
+  }
+}
+
+/* Android Chrome specific fixes */
+@media screen and (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+}
+
+/* Universal mobile fix - ensure no zoom */
+@media screen and (max-width: 768px) {
+  /* Reset viewport scale */
+  html, body {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+  }
+
+  /* Ensure main content area */
+  main,
+  #__next,
+  #__next > div {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+  }
+
+  /* Fix all page containers */
+  .sell-truck-page,
+  .browse-trucks-page,
+  .services-page,
+  [class*="-page"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ============================================
+   IMAGE DOTS BELOW IMAGE - MOBILE FIX
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+  /* Ensure image dots container is below image */
+  .td-image-dots-container {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .td-image-dots-wrapper {
+    background: #f3f4f6 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* ============================================
+   HIDE EMPTY THUMBNAIL PLACEHOLDERS
+   ============================================ */
+
+/* Hide thumbnail container if empty */
+.td-thumbs-container:empty,
+.td-thumbs-container:has(.td-thumbs:empty) {
+  display: none !important;
+}
+
+/* Hide empty thumbnails */
+.td-thumb:empty,
+.td-thumb:not(:has(img)) {
+  display: none !important;
+}
+
+/* Hide thumbnails with placeholder images */
+.td-thumb img[src="/placeholder.jpg"],
+.td-thumb img[src=""],
+.td-thumb img:not([src]) {
+  display: none !important;
+}
+
+.td-thumb:has(img[src="/placeholder.jpg"]),
+.td-thumb:has(img[src=""]),
+.td-thumb:has(img:not([src])) {
+  display: none !important;
+}
+
+/* Mobile: Hide thumbnail section if no valid images */
+@media screen and (max-width: 768px) {
+  .td-thumbs-container:empty,
+  .td-thumbs:empty {
+    display: none !important;
+  }
+
+  /* Hide navigation buttons if no thumbnails */
+  .td-thumbs-container:has(.td-thumbs:empty) .td-thumbs-nav-btn {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MOBILE MENU TEXT ALIGNMENT FIX
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+  /* Ensure all menu items are properly aligned */
+  .nav-menu .nav-item {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Center all nav links */
+  .nav-menu .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: calc(100% - 2rem) !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+    padding: 1.1rem 1.5rem !important;
+  }
+
+  /* Fix dropdown wrapper alignment */
+  .nav-menu .dropdown-link-wrapper {
+    width: calc(100% - 2rem) !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* Ensure text in dropdown links is centered */
+  .nav-menu .dropdown-link-wrapper .nav-link {
+    text-align: center !important;
+    justify-content: center !important;
+    flex: 1 !important;
+  }
+
+  /* Fix contact button alignment */
+  .nav-menu .contact-btn {
+    text-align: center !important;
+    justify-content: center !important;
+    width: calc(100% - 2rem) !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Remove any text alignment issues */
+  .nav-menu .nav-link span,
+  .nav-menu .nav-link {
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }

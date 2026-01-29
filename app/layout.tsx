@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
+import BottomNavigation from '@/components/BottomNavigation'
 
 const poppins = Poppins({ 
   weight: ['300', '400', '500', '600', '700'],
@@ -17,7 +18,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#ffffff',
 }
 
 export default function RootLayout({
@@ -29,11 +33,49 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         {children}
+        <BottomNavigation />
         <Toaster position="top-right" richColors />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
+                // Prevent zoom on mobile
+                function preventZoom() {
+                  const viewport = document.querySelector('meta[name="viewport"]');
+                  if (viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                  }
+                  
+                  // Prevent double-tap zoom
+                  let lastTouchEnd = 0;
+                  document.addEventListener('touchend', function(event) {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                      event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                  }, false);
+
+                  // Ensure proper scaling
+                  document.documentElement.style.setProperty('font-size', '16px', 'important');
+                  document.body.style.setProperty('transform', 'scale(1)', 'important');
+                  document.body.style.setProperty('zoom', '1', 'important');
+                }
+                
+                // Run immediately
+                preventZoom();
+                
+                // Run after DOM is ready
+                if (document.readyState === 'loading') {
+                  document.addEventListener('DOMContentLoaded', preventZoom);
+                }
+                
+                // Run after page load
+                window.addEventListener('load', preventZoom);
+                
+                // Run on resize
+                window.addEventListener('resize', preventZoom);
+                
                 const hiddenElements = new WeakSet();
                 
                 function hideNIcon() {
