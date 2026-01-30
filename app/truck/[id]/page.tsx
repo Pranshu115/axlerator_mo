@@ -272,12 +272,17 @@ export default function TruckDetailsPage() {
   }
 
   const getGalleryImages = () => {
-    // Use dynamically loaded images if available
+    // Use dynamically loaded images if available (from Supabase)
     if (truckImages.length > 0) {
       return truckImages
     }
     
-    if (!truck?.imageUrl) return []
+    // Fallback to single image from truck data
+    if (truck?.imageUrl) {
+      return [truck.imageUrl]
+    }
+    
+    return []
     
     // Special handling for Eicher PRO 2110 - use all 4 images
     if (truck.manufacturer === 'Eicher Motors' && truck.model?.includes('PRO 2110')) {
@@ -762,14 +767,27 @@ export default function TruckDetailsPage() {
         {/* Gallery */}
         <div className="td-gallery">
           <div className="td-main-image">
-            <Image
-              src={gallery[selectedImageIndex] || '/placeholder.jpg'}
-              alt={truck.name}
-              fill
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
-              unoptimized
-              priority
-            />
+            {gallery[selectedImageIndex] && gallery[selectedImageIndex] !== '/placeholder.jpg' ? (
+              <Image
+                src={gallery[selectedImageIndex]}
+                alt={truck.name}
+                fill
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                unoptimized={true}
+                priority
+                onError={(e) => {
+                  console.error('Image load error:', gallery[selectedImageIndex])
+                  // Don't show placeholder, just log the error
+                }}
+              />
+            ) : (
+              <div className="td-image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p>Image loading...</p>
+              </div>
+            )}
             <button 
               className="td-nav-btn prev"
               onClick={() => {
@@ -880,7 +898,16 @@ export default function TruckDetailsPage() {
                       className={`td-thumb ${absoluteIdx === selectedImageIndex ? 'active' : ''}`}
                       onClick={() => setSelectedImageIndex(absoluteIdx)}
                     >
-                      <Image src={img} alt={`Thumbnail ${absoluteIdx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                      <Image 
+                        src={img} 
+                        alt={`Thumbnail ${absoluteIdx + 1}`} 
+                        fill 
+                        style={{ objectFit: 'cover' }} 
+                        unoptimized={true}
+                        onError={(e) => {
+                          console.error('Thumbnail load error:', img)
+                        }}
+                      />
                     </button>
                   )
                 })}
@@ -1434,7 +1461,16 @@ export default function TruckDetailsPage() {
             {similarTrucks.map((st) => (
               <Link href={`/truck/${st.id}`} key={st.id} className="td-similar-card">
                 <div className="td-similar-img">
-                  <Image src={st.imageUrl} alt={st.name} fill style={{ objectFit: 'cover' }} unoptimized />
+                  <Image 
+                    src={st.imageUrl} 
+                    alt={st.name} 
+                    fill 
+                    style={{ objectFit: 'cover' }} 
+                    unoptimized={true}
+                    onError={(e) => {
+                      console.error('Similar truck image load error:', st.imageUrl)
+                    }}
+                  />
                   <span className="td-similar-certified">Certified</span>
                 </div>
                 <div className="td-similar-info">

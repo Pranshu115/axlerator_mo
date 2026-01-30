@@ -117,7 +117,7 @@ export default function TruckCard({ truck }: TruckCardProps) {
                     style={{ objectFit: 'cover' }}
                     className="truck-card-img"
                     priority={index === 0}
-                    unoptimized={img?.includes('supabase.co')}
+                    unoptimized={true}
                     onError={(e) => {
                       console.error('Image load error:', img)
                       // Fallback to placeholder or hide image
